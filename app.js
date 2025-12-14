@@ -1,15 +1,32 @@
-// GANTI dengan endpoint yang sama yang dipakai bot WA-mu.
-// Misal: const API_URL = "https://api.monit.my.id/zeroends";
-const API_URL = "https://api.monit.my.id/zeroends";
+// Domain fixed seperti di handler WA
+const DOMAIN = "play.zeroends.me";
 
+// Endpoint status & widget dari mcstatus.io (sama dengan bot WA)
+const STATUS_API_URL = `https://api.mcstatus.io/v2/status/java/${DOMAIN}`;
+const WIDGET_URL = `https://api.mcstatus.io/v2/widget/java/${DOMAIN}`;
+
+// Ambil elemen DOM
 const loadingEl = document.getElementById("loading");
 const errorEl = document.getElementById("error");
 const resultCard = document.getElementById("result-card");
 const refreshBtn = document.getElementById("refresh-btn");
 
 const imgEl = document.getElementById("status-image");
-const expiresEl = document.getElementById("expires-value");
+const overlayMainEl = document.getElementById("status-overlay-main");
+const overlaySubEl = document.getElementById("status-overlay-sub");
+
 const statusTextEl = document.getElementById("status-text");
+const hostEl = document.getElementById("host-value");
+const portEl = document.getElementById("port-value");
+const ipEl = document.getElementById("ip-value");
+const eulaEl = document.getElementById("eula-value");
+const srvEl = document.getElementById("srv-value");
+const versionEl = document.getElementById("version-value");
+const motdEl = document.getElementById("motd-value");
+const playersCountEl = document.getElementById("players-count-value");
+const playersListEl = document.getElementById("players-list-value");
+const retrievedEl = document.getElementById("retrieved-value");
+const expiresEl = document.getElementById("expires-value");
 const msgEl = document.getElementById("status-message");
 
 function setLoading(isLoading) {
@@ -24,71 +41,113 @@ function setLoading(isLoading) {
   }
 }
 
-function formatExpires(expiresAt) {
-  if (!expiresAt) return "-";
-  const d = new Date(expiresAt);
-  if (isNaN(d.getTime())) return expiresAt;
-  return d.toLocaleString("id-ID", {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+function formatDateToJakarta(isoOrMs) {
+  if (!isoOrMs) return "-";
+  const d = new Date(isoOrMs);
+  if (isNaN(d.getTime())) return String(isoOrMs);
+  return d.toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
 }
 
-function renderFromApi(data) {
-  // SAMAKAN ini dengan struktur data di bot WA
-  const isOnline = !!data.online;
-  const widgetUrl = data.widgetUrl;
-  const expiresAt = data.expiresAt;
-
-  resultCard.classList.remove("hidden");
-
-  imgEl.src =
-    widgetUrl || "https://via.placeholder.com/800x300?text=ZeroEnds+Widget";
-  imgEl.alt = "Server widget";
-
-  expiresEl.textContent = formatExpires(expiresAt);
-
-  // Versi “caption” bot WA diubah jadi teks web
-  if (isOnline) {
-    statusTextEl.textContent = "ONLINE";
-    msgEl.innerHTML =
-      `<span class="online">Server sedang ONLINE.</span> Nikmati permainan seperti biasa.`;
-  } else {
-    statusTextEl.textContent = "OFFLINE";
-    msgEl.innerHTML =
-      `<span class="offline">The server is currently offline or unreachable.</span>`;
+// Porting helper dari bot (tanpa global.loading, dsb)
+async function fetchMcStatus(domain) {
+  try {
+    const res = await fetch(`https://api.mcstatus.io/v2/status/java/${domain}`);
+    if (!res.ok) {
+      return { success: false, error: "Failed to fetch status from API." };
+    }
+    const data = await res.json();
+    return { success: true, data };
+  } catch (e) {
+    return { success: false, error: e.message || "Unknown error occurred." };
   }
 }
 
-async function fetchStatus() {
+// Render hasil ke UI, mirip dengan caption bot tapi versi web
+function renderFromData(data) {
+  const srvRecord = data.srv_record
+    ? `${data.srv_record.host}:${data.srv_record.port}`
+    : "None";
+
+  const retrievedAt = formatDateToJakarta(data.retrieved_at);
+  const expiresAt = formatDateToJakarta(data.expires_at);
+
+  const versionClean = data.version?.name_clean || "Unknown";
+  const motdClean = data.motd?.clean || "-";
+
+  const playersOnline = data.players?.online ?? 0;
+  const playersMax = data.players?.max ?? 0;
+
+  const playerNames = Array.isArray(data.players?.list)
+    ? data.players.list
+        .map(p => p?.name_clean)
+        .filter(Boolean)
+    : [];
+
+  const playersLine = playerNames.length
+    ? playerNames.join(", ")
+    : "No players online.";
+
+  // Tampilkan kartu
+  resultCard.classList.remove("hidden");
+
+  // Gambar widget sama dengan WA
+  imgEl.src = WIDGET_URL;
+  imgEl.alt = `Widget server ${DOMAIN}`;
+
+  // Overlay header
+  overlayMainEl.textContent = "MINECRAFT SERVER STATUS S2";
+  overlaySubEl.textContent = data.online
+    ? "Server sedang online"
+    : "Server offline atau tidak dapat dijangkau";
+
+  // Field umum
+  statusTextEl.textContent = data.online ? "Online" : "Offline";
+  hostEl.textContent = data.host ?? "-";
+  portEl.textContent = data.port ?? "-";
+  ipEl.textContent = data.ip_address || "-";
+  eulaEl.textContent = String(data.eula_blocked);
+  srvEl.textContent = srvRecord;
+  versionEl.textContent = versionClean;
+  motdEl.textContent = motdClean;
+  playersCountEl.textContent = `${playersOnline} / ${playersMax}`;
+  playersListEl.textContent = playersLine;
+  retrievedEl.textContent = retrievedAt;
+  expiresEl.textContent = expiresAt;
+
+  // “Caption” versi web, sejiwa dengan bot
+  if (data.online) {
+    msgEl.innerHTML =
+      `<span class="online">🟢 MINECRAFT SERVER STATUS S2 (ONLINE)</span>
+` +
+      `Server aktif dan dapat dijangkau. Data di atas mengambil host, port, IP, EULA, version, MOTD, dan player list langsung dari mcstatus.io.`;
+  } else {
+    msgEl.innerHTML =
+      `<span class="offline">🔴 MINECRAFT SERVER STATUS (OFFLINE)</span>
+` +
+      `The server is currently offline or unreachable. Informasi terakhir (retrieved/expires) tetap ditampilkan sesuai respon API.`;
+  }
+}
+
+async function run() {
   setLoading(true);
   resultCard.classList.add("hidden");
 
   try {
-    const res = await fetch(API_URL, { method: "GET" });
-
-    if (!res.ok) {
-      throw new Error("Gagal menghubungi API (" + res.status + ")");
+    const { success, data, error } = await fetchMcStatus(DOMAIN);
+    if (!success) {
+      throw new Error(error || "Failed to fetch server status.");
     }
 
-    const data = await res.json();
-    renderFromApi(data);
-  } catch (err) {
+    renderFromData(data);
+  } catch (e) {
     errorEl.textContent =
-      "Gagal mengambil data (scrape) seperti bot WA: " + (err?.message || err);
+      "Failed to check server status (web): " + (e?.message || e);
     errorEl.classList.remove("hidden");
   } finally {
     setLoading(false);
   }
 }
 
-window.addEventListener("load", () => {
-  fetchStatus();
-});
-
-refreshBtn.addEventListener("click", () => {
-  fetchStatus();
-});
+// Auto cek saat halaman dibuka & tombol refresh
+window.addEventListener("load", run);
+refreshBtn.addEventListener("click", run);
