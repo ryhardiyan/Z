@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>ZeroEnds Status (Versi Web)</title>
+  <title>ZeroEnds Server Status</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -12,14 +12,16 @@
       <div class="header">
         <div class="title-wrap">
           <div class="title">ZeroEnds Status</div>
-          <div class="subtitle">Implementasi fitur bot WA ke website</div>
+          <div class="subtitle">Mirroring fitur bot WhatsApp ke website</div>
         </div>
-        <div class="pill">api.monit.my.id</div>
+        <div class="pill">mc.zero-end.my.id</div>
       </div>
 
       <div id="loading" class="loading">
-        <span class="loading-dots"><span></span><span></span><span></span></span>
-        <span>Mengambil data seperti bot WA...</span>
+        <span class="loading-dots">
+          <span></span><span></span><span></span>
+        </span>
+        <span>Mengambil data dari mcstatus.io...</span>
       </div>
 
       <div id="error" class="error hidden"></div>
@@ -27,29 +29,86 @@
       <div id="result-card" class="status-card hidden">
         <div class="status-media">
           <img id="status-image" src="" alt="Server widget" />
-        </div>
-        <div class="status-body">
-          <div class="status-row">
-            <span class="label">Expires At</span>
-            <span class="value" id="expires-value">—</span>
+          <div class="status-overlay">
+            <div class="status-overlay-main" id="status-overlay-main">MINECRAFT SERVER</div>
+            <div class="status-overlay-sub" id="status-overlay-sub">Status...</div>
           </div>
+        </div>
+
+        <div class="status-body">
           <div class="status-row">
             <span class="label">Status</span>
             <span class="value" id="status-text">—</span>
           </div>
+
+          <div class="status-row">
+            <span class="label">Host</span>
+            <span class="value" id="host-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">Port</span>
+            <span class="value" id="port-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">IP Address</span>
+            <span class="value" id="ip-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">EULA Blocked</span>
+            <span class="value" id="eula-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">SRV Record</span>
+            <span class="value" id="srv-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">Version</span>
+            <span class="value" id="version-value">—</span>
+          </div>
+
+          <div class="status-row motd-row">
+            <span class="label">MOTD</span>
+            <span class="value value-multiline" id="motd-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">Players</span>
+            <span class="value" id="players-count-value">—</span>
+          </div>
+
+          <div class="status-row players-row">
+            <span class="label">Online Players</span>
+            <span class="value value-multiline" id="players-list-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">Retrieved At</span>
+            <span class="value" id="retrieved-value">—</span>
+          </div>
+
+          <div class="status-row">
+            <span class="label">Expires At</span>
+            <span class="value" id="expires-value">—</span>
+          </div>
+
           <div class="status-message" id="status-message">
-            Menunggu respon dari “scrape”...
+            Menunggu respon dari API...
           </div>
         </div>
       </div>
 
       <button id="refresh-btn" class="refresh-btn">
         <span class="dot"></span>
-        <span>Refresh (ulang scrape)</span>
+        <span>Refresh (ulang cek)</span>
       </button>
     </div>
   </div>
 
   <script src="app.js"></script>
 </body>
-            </html>
+              </html>
