@@ -95,7 +95,7 @@ function renderFromData(data) {
   imgEl.alt = `Widget server ${DOMAIN}`;
 
   // Overlay header
-  overlayMainEl.textContent = "MINECRAFT SERVER STATUS S2";
+  overlayMainEl.textContent = "MINECRAFT SERVER STATUS S3";
   overlaySubEl.textContent = data.online
     ? "Server sedang online"
     : "Server offline atau tidak dapat dijangkau";
@@ -117,14 +117,14 @@ function renderFromData(data) {
   // “Caption” versi web, sejiwa dengan bot
   if (data.online) {
     msgEl.innerHTML =
-      `<span class="online">🟢 MINECRAFT SERVER STATUS S2 (ONLINE)</span>
+      `<span class="online">🟢 MINECRAFT SERVER STATUS S3 (ONLINE)</span>
 ` +
-      `Server aktif dan dapat dijangkau. Data di atas mengambil host, port, IP, EULA, version, MOTD, dan player list langsung dari mcstatus.io.`;
+      `Server aktif dan dapat dijangkau. Data di atas mengambil host, port, IP, EULA, version, MOTD, dan player list langsung dari minecraft.`;
   } else {
     msgEl.innerHTML =
-      `<span class="offline">🔴 MINECRAFT SERVER STATUS (OFFLINE)</span>
+      `<span class="offline">🔴 MINECRAFT SERVER STATUS S3 (OFFLINE)</span>
 ` +
-      `The server is currently offline or unreachable. Informasi terakhir (retrieved/expires) tetap ditampilkan sesuai respon API.`;
+      `The server is currently offline or unreachable.`;
   }
 }
 
