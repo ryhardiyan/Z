@@ -1,9 +1,9 @@
 // Domain fixed seperti di handler WA
-const DOMAIN = "survivalmurni.skyes.me";
+const DOMAIN = "survivalmurni.skyes.me:19236";
 
 // Endpoint status & widget dari mcstatus.io (sama dengan bot WA)
-const STATUS_API_URL = `https://api.mcstatus.io/v2/status/java/${DOMAIN}`;
-const WIDGET_URL = `https://api.mcstatus.io/v2/widget/java/${DOMAIN}`;
+const STATUS_API_URL = `https://api.mcstatus.io/v2/status/bedrock/${DOMAIN}`;
+const WIDGET_URL = `https://api.mcstatus.io/v2/widget/bedrock/${DOMAIN}`;
 
 // Ambil elemen DOM
 const loadingEl = document.getElementById("loading");
@@ -51,7 +51,7 @@ function formatDateToJakarta(isoOrMs) {
 // Porting helper dari bot (tanpa global.loading, dsb)
 async function fetchMcStatus(domain) {
   try {
-    const res = await fetch(`https://api.mcstatus.io/v2/status/java/${domain}`);
+    const res = await fetch(`https://api.mcstatus.io/v2/status/bedrock/${domain}`);
     if (!res.ok) {
       return { success: false, error: "Failed to fetch status from API." };
     }
