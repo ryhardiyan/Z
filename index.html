@@ -1,114 +1,93 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>ZeroEnds Server Status</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Responsive Web Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        nav {
+            margin: 20px 0;
+        }
+
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="shell">
-    <div class="card">
-      <div class="header">
-        <div class="title-wrap">
-          <div class="title">Skyes Status</div>
-          <div class="subtitle">Mirroring fitur bot WhatsApp ke website</div>
-        </div>
-        <div class="pill">survivalmurni.skyes.me</div>
-      </div>
 
-      <div id="loading" class="loading">
-        <span class="loading-dots">
-          <span></span><span></span><span></span>
-        </span>
-        <span>Mengambil data dari mcstatus.io...</span>
-      </div>
+    <header>
+        <h1>Welcome to My Responsive Web Page</h1>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
 
-      <div id="error" class="error hidden"></div>
+    <main>
+        <section id="home">
+            <h2>Home</h2>
+            <p>This is the home section of the website, where users can find the main content.</p>
+        </section>
 
-      <div id="result-card" class="status-card hidden">
-        <div class="status-media">
-          <img id="status-image" src="" alt="Server widget" />
-          <div class="status-overlay">
-            <div class="status-overlay-main" id="status-overlay-main">MINECRAFT SERVER</div>
-            <div class="status-overlay-sub" id="status-overlay-sub">Status...</div>
-          </div>
-        </div>
+        <section id="about">
+            <h2>About</h2>
+            <p>This section provides information about the website or the individual.</p>
+        </section>
 
-        <div class="status-body">
-          <div class="status-row">
-            <span class="label">Status</span>
-            <span class="value" id="status-text">—</span>
-          </div>
+        <section id="contact">
+            <h2>Contact</h2>
+            <p>Here are the contact details for further inquiries.</p>
+        </section>
+    </main>
 
-          <div class="status-row">
-            <span class="label">Host</span>
-            <span class="value" id="host-value">—</span>
-          </div>
+    <footer>
+        <p>&copy; 2026 My Website. All Rights Reserved.</p>
+    </footer>
 
-          <div class="status-row">
-            <span class="label">Port</span>
-            <span class="value" id="port-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">IP Address</span>
-            <span class="value" id="ip-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">EULA Blocked</span>
-            <span class="value" id="eula-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">SRV Record</span>
-            <span class="value" id="srv-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">Version</span>
-            <span class="value" id="version-value">—</span>
-          </div>
-
-          <div class="status-row motd-row">
-            <span class="label">MOTD</span>
-            <span class="value value-multiline" id="motd-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">Players</span>
-            <span class="value" id="players-count-value">—</span>
-          </div>
-
-          <div class="status-row players-row">
-            <span class="label">Online Players</span>
-            <span class="value value-multiline" id="players-list-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">Retrieved At</span>
-            <span class="value" id="retrieved-value">—</span>
-          </div>
-
-          <div class="status-row">
-            <span class="label">Expires At</span>
-            <span class="value" id="expires-value">—</span>
-          </div>
-
-          <div class="status-message" id="status-message">
-            Menunggu respon dari API...
-          </div>
-        </div>
-      </div>
-
-      <button id="refresh-btn" class="refresh-btn">
-        <span class="dot"></span>
-        <span>Refresh (ulang cek)</span>
-      </button>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
 </body>
+
 </html>
