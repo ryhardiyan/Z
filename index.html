@@ -1,93 +1,538 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Responsive Web Page</title>
+    <meta name="description" content="Minecraft Server Status Checker - Survivalmurni">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Minecraft Server Status - Survivalmurni</title>
+    
     <style>
-        body {
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #0f3460;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-color: #ecf0f1;
+            --border-color: #34495e;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s ease;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-        }
-
-        header {
-            background: #333;
-            color: #fff;
-            padding: 10px 20px;
-            text-align: center;
-        }
-
-        nav {
-            margin: 20px 0;
-        }
-
-        nav a {
-            color: #fff;
-            margin: 0 15px;
-            text-decoration: none;
-        }
-
-        main {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
-        section {
-            margin-bottom: 20px;
-        }
-
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px 0;
-            position: relative;
-            bottom: 0;
+        .container {
+            max-width: 800px;
             width: 100%;
         }
 
-        @media (max-width: 600px) {
-            nav {
-                display: flex;
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideInDown 0.5s ease;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #95a5a6;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: slideInUp 0.5s ease;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .spinner-text {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--danger-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+            animation: slideInDown 0.3s ease;
+        }
+
+        #result-card {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .status-widget {
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        #status-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: var(--primary-color);
+        }
+
+        .overlay-text {
+            position: relative;
+            top: -50px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #status-overlay-main {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        #status-overlay-sub {
+            font-size: 0.9rem;
+            color: #95a5a6;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .status-item {
+            background: var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            transition: var(--transition);
+        }
+
+        .status-item:hover {
+            background: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .status-item-label {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .status-item-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            word-break: break-all;
+            color: var(--text-color);
+        }
+
+        .status-item-value.online {
+            color: var(--success-color);
+        }
+
+        .status-item-value.offline {
+            color: var(--danger-color);
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .players-section {
+            background: var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            margin-bottom: 25px;
+        }
+
+        .players-label {
+            font-size: 0.85rem;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .players-count {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+        }
+
+        .players-list {
+            font-size: 0.95rem;
+            color: #ecf0f1;
+            line-height: 1.8;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .status-message {
+            background: rgba(47, 84, 153, 0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .status-message .online {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .status-message .offline {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        #refresh-btn {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        #refresh-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        #refresh-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--success-color);
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .players-section {
+                margin-bottom: 20px;
+            }
+
+            .button-group {
                 flex-direction: column;
             }
+
+            #refresh-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                margin-bottom: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 15px;
+                border-radius: 8px;
+            }
+
+            .status-item {
+                padding: 12px;
+            }
+
+            .status-item-label {
+                font-size: 0.75rem;
+            }
+
+            .status-item-value {
+                font-size: 1rem;
+            }
+
+            .players-count {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
         }
     </style>
 </head>
-
 <body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎮 Minecraft Server Status</h1>
+            <p>Survivalmurni - Real-time Server Monitoring</p>
+        </div>
 
-    <header>
-        <h1>Welcome to My Responsive Web Page</h1>
-        <nav>
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-        </nav>
-    </header>
+        <!-- Loading Indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p class="spinner-text">Checking server status...</p>
+        </div>
 
-    <main>
-        <section id="home">
-            <h2>Home</h2>
-            <p>This is the home section of the website, where users can find the main content.</p>
-        </section>
+        <!-- Error Message -->
+        <div id="error" class="error hidden"></div>
 
-        <section id="about">
-            <h2>About</h2>
-            <p>This section provides information about the website or the individual.</p>
-        </section>
+        <!-- Main Card -->
+        <div id="result-card" class="card hidden">
+            <!-- Status Widget -->
+            <div class="status-widget">
+                <img id="status-image" src="" alt="Server Widget" loading="lazy">
+                <div class="overlay-text">
+                    <div id="status-overlay-main">Loading...</div>
+                    <div id="status-overlay-sub">Retrieving data...</div>
+                </div>
+            </div>
 
-        <section id="contact">
-            <h2>Contact</h2>
-            <p>Here are the contact details for further inquiries.</p>
-        </section>
-    </main>
+            <!-- Status Message -->
+            <div id="status-message" class="status-message"></div>
 
-    <footer>
-        <p>&copy; 2026 My Website. All Rights Reserved.</p>
-    </footer>
+            <!-- Status Grid -->
+            <div class="status-grid">
+                <div class="status-item">
+                    <div class="status-item-label">Server Status</div>
+                    <div id="status-text" class="status-item-value">-</div>
+                </div>
 
+                <div class="status-item">
+                    <div class="status-item-label">Host</div>
+                    <div id="host-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-item-label">Port</div>
+                    <div id="port-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-item-label">IP Address</div>
+                    <div id="ip-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-item-label">EULA Blocked</div>
+                    <div id="eula-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-item-label">SRV Record</div>
+                    <div id="srv-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item full-width">
+                    <div class="status-item-label">Version</div>
+                    <div id="version-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item full-width">
+                    <div class="status-item-label">MOTD (Message of the Day)</div>
+                    <div id="motd-value" class="status-item-value">-</div>
+                </div>
+            </div>
+
+            <!-- Players Section -->
+            <div class="players-section">
+                <div class="players-label">🎮 Players Online</div>
+                <div class="players-count" id="players-count-value">0 / 0</div>
+                <div class="players-label">Player List</div>
+                <div class="players-list" id="players-list-value">No players online.</div>
+            </div>
+
+            <!-- Data Info -->
+            <div class="status-grid" style="margin-top: 20px; margin-bottom: 0;">
+                <div class="status-item">
+                    <div class="status-item-label">Retrieved At</div>
+                    <div id="retrieved-value" class="status-item-value">-</div>
+                </div>
+
+                <div class="status-item">
+                    <div class="status-item-label">Expires At</div>
+                    <div id="expires-value" class="status-item-value">-</div>
+                </div>
+            </div>
+
+            <!-- Button Group -->
+            <div class="button-group">
+                <button id="refresh-btn" aria-label="Refresh server status">
+                    🔄 Refresh Status
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Survivalmurni Minecraft Server | Powered by mcstatus.io</p>
+            <p>Last updated: <span id="last-update">Never</span></p>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="app.js" defer></script>
 </body>
-
 </html>
