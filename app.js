@@ -1,5 +1,5 @@
 // Domain fixed seperti di handler WA
-const DOMAIN = "play.zeroends.me";
+const DOMAIN = "survivalmurni.skyes.me";
 
 // Endpoint status & widget dari mcstatus.io (sama dengan bot WA)
 const STATUS_API_URL = `https://api.mcstatus.io/v2/status/java/${DOMAIN}`;
